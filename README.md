@@ -4,7 +4,7 @@
 
 ## Getting Started
 
-This project is a flutter application. Should follow the flutter instructions to run it on Android or iOS.
+This project is a flutter application. Should follow the flutter instructions to run it on Android or iOS. https://flutter.dev/docs/get-started/install
 
 Fingerprint authentication is implemented in Android native layer. No implementation of the same in iOS.
 
