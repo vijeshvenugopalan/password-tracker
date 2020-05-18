@@ -1,4 +1,6 @@
-# Password Tracker
+<img src="icons/icon.png" width="80" alt="">
+
+# Password Tracker 
 
 ## Getting Started
 
