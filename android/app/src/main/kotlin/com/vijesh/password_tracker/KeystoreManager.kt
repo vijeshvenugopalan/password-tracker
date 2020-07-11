@@ -77,7 +77,7 @@ class KeystoreManager(ctxt: Context, crypto: CryptoHelper) {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
             builder.setUnlockedDeviceRequired(true)            // these methods require API min 28
-                    .setIsStrongBoxBacked(true)
+                    // .setIsStrongBoxBacked(true)
         }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -106,6 +106,14 @@ class KeystoreManager(ctxt: Context, crypto: CryptoHelper) {
             editor.apply()
             return cipher
         }
+    }
+    fun clearKeys() {
+        val preferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+        preferences.edit().remove(KEYSTORE_IV_NAME).commit();
+        val ks = KeyStore.getInstance("AndroidKeyStore")
+        ks.load(null)
+        ks.deleteEntry(MASTER_KEY_ALIAS)
+        generateMasterKeys();
     }
 
     fun encryptApplicationKey(pt: ByteArray, cipher: Cipher): ByteArray {

@@ -40,10 +40,10 @@ class TrackerDatabase {
     insert into tItem (name,is_folder,parent) values ('/',1,1)
     ''',
     '''
-    insert into tItem (name,is_folder,parent) values ('test-folder',1,1)
+    insert into tItem (name,is_folder,parent) values ('sample-folder',1,1)
     ''',
     '''
-    insert into tItem (name,is_folder,parent) values ('test-item',0,2)
+    insert into tItem (name,is_folder,parent) values ('sample-item',0,2)
     ''',
     '''
     insert into tItemData (username,url,item_id) values ('user','google.com',3)

@@ -17,7 +17,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     "Biometric",
     "Export to file",
     "Import",
-    "Import from crome(csv)"
+    "Import from chrome(csv)"
   ];
 
   @override
@@ -123,7 +123,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         Navigator.pop(context);
         Navigator.pushNamed(context, '/import_file');
         break;
-      case "Import from crome(csv)":
+      case "Import from chrome(csv)":
         log.i('drawer.dart :: 108 :: import from chrome');
         Navigator.pop(context);
         Navigator.pushNamed(context, '/import_chrome_password');

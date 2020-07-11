@@ -30,8 +30,11 @@ class MainActivity: BiometricCallback, FlutterActivity() {
     private var secureLocalManager: SecureLocalManager? = null;
     private lateinit var methodChannel: MethodChannel
     private var isEncrypt = false;
-    private var release = true;
     private lateinit var text: String
+    companion object {
+        var release = true;
+
+    }
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         log("configure flutter engine")
@@ -39,7 +42,7 @@ class MainActivity: BiometricCallback, FlutterActivity() {
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
         methodChannel.setMethodCallHandler {
             call, result ->
-            log("Inside invoke method 1")
+            log("Inside invoke method = ${call.method}")
             if (null == secureLocalManager) {
                 secureLocalManager = SecureLocalManager(applicationContext)
             }
@@ -51,6 +54,9 @@ class MainActivity: BiometricCallback, FlutterActivity() {
                     log("text  encrypt = $text")
                     result.success("SUCCESS")
                 }catch (e:Exception) {
+                    e.printStackTrace()
+                    log("Going to clear shared preferences")
+                    secureLocalManager!!.clearKeys()
                     result.error("ERROR","UNEXPECTED-ERROR", null);
                 }
             } else if(call.method == "decrypt"){
@@ -60,6 +66,9 @@ class MainActivity: BiometricCallback, FlutterActivity() {
                     log("text decrypt = $text")
                     result.success("SUCCESS")
                 }catch (e:Exception) {
+                    e.printStackTrace();
+                    log("Going to clear shared preferences")
+                    secureLocalManager!!.clearKeys()
                     result.error("ERROR","UNEXPECTED-ERROR", null);
                 }
             } else {

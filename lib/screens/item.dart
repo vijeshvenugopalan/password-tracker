@@ -112,6 +112,18 @@ class _ItemWidgetState extends State<ItemWidget> {
       _controllerUrl.text = itemData.url;
       _controllerSecret.text = itemData.secret;
       _controllerComments.text = itemData.comments;
+      if (null == _controllerSecret.text ||
+          _controllerSecret.text.length <= 0) {
+        secretEnable = true;
+      }
+      if (null == _controllerPassword.text ||
+          _controllerPassword.text.length <= 0) {
+        passwordEnable = true;
+      }
+      if (null == _controllerComments.text ||
+          _controllerComments.text.length <= 0) {
+        commentsEnable = true;
+      }
       isFirst = false;
     }
     return WillPopScope(

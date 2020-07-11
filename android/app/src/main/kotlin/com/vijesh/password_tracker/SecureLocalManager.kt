@@ -8,7 +8,7 @@ import java.security.Signature
 
 
 class SecureLocalManager(ctxt: Context) {
-    private var release = true;
+    private var release = MainActivity.release;
     companion object {
         const val SHARED_PREFERENCES_NAME = "settings"
         const val APPLICATION_KEY_NAME = "ApplicationKey"
@@ -70,6 +70,11 @@ class SecureLocalManager(ctxt: Context) {
             editor.putString(APPLICATION_KEY_NAME, encryptedAppKey)
             editor.apply()
         }
+    }
+    fun clearKeys() {
+        val preferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
+        preferences.edit().remove(APPLICATION_KEY_NAME).commit()
+        keystoreManager.clearKeys()
     }
 
     fun getSignature(): Signature {
