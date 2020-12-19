@@ -11,6 +11,7 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.OAEPParameterSpec
 import javax.crypto.spec.PSource
 
@@ -48,7 +49,7 @@ class KeyStoreHelper(val TYPE:Type) {
                 KeyGenParameterSpec.Builder(MASTER_KEY_ALIAS,
                     KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
                 )
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                     .setUserAuthenticationRequired(true)
                     .build()
             )
@@ -63,7 +64,7 @@ class KeyStoreHelper(val TYPE:Type) {
         ks.load(null)
         val key = ks.getKey(MASTER_KEY_ALIAS, null) as PrivateKey
         val cipher = if (TYPE == Type.ASYMMETRIC) Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding")
-        else Cipher.getInstance("AES/GCM/NoPadding")
+        else Cipher.getInstance("AES/CBC/NoPadding")
         cipher.init(Cipher.DECRYPT_MODE, key)
         return cipher
     }
@@ -90,8 +91,8 @@ class KeyStoreHelper(val TYPE:Type) {
             val iv = ByteArray(16)
             Random().nextBytes(iv)
             //TODO: save IV
-            val spec = GCMParameterSpec(16 * Byte.SIZE, iv)
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            val spec = IvParameterSpec(iv)
+            val cipher = Cipher.getInstance("AES/CBC/NoPadding")
             cipher.init(Cipher.ENCRYPT_MODE, key, spec)
             return cipher.doFinal(pt)?: throw IllegalArgumentException("ENCRYPTION ERROR!")
         }

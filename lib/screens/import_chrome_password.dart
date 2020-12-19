@@ -86,10 +86,11 @@ class _ImportChromePasswordState extends State<ImportChromePassword>
                   log.i('import_chrome_password.dart :: 24 :: key pressed');
                   lifecycleState.canLaunchPassword = false;
                   await getPermissions();
-                  File file = await FilePicker.getFile(
-                    allowedExtensions: [".csv"],
-                    type: FileType.custom,
-                  );
+                  FilePickerResult result = await FilePicker.platform.pickFiles();
+                  File file;
+                  if(result != null) {
+                    file = File(result.files.single.path);
+                  }
                   setState(() {
                     msg = "WAITING";
                   });

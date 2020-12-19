@@ -20,7 +20,7 @@ class Password extends ChangeNotifier {
   bool _isComplete = false;
   List<BiometricType> availableBiometrics;
   Function callback;
-  bool initalSetup = false;
+  bool initalSetup = true;
 
   static const platform = const MethodChannel('vijesh.flutter.dev/fingerprint');
 
@@ -48,9 +48,12 @@ class Password extends ChangeNotifier {
     try {
       await platform.invokeMethod('encrypt', {"text":passwordHash});
     } on PlatformException catch (e) {
+      log.i('password.dart :: 51 :: ${e.toString()}');
+      setBiometric(null);
       return Future.value(e.message);
     } on Exception catch (ex) {
       log.i('password.dart :: 52 :: error = ${ex.toString()}');
+      setBiometric(null);
       return Future.value(". Please define fingerprint through device settings.");
     }
     return Future.value("SUCCESS");    
@@ -61,7 +64,13 @@ class Password extends ChangeNotifier {
     try {
       await platform.invokeMethod('decrypt', {"text":_encryptedBiometric});
     } on PlatformException catch (e) {
+      log.i('password.dart :: 67 :: ${e.toString()}');
+      setBiometric(null);
       return Future.value(e.message);
+    } on Exception catch (ex) {
+      log.i('password.dart :: 66 :: error = ${ex.toString()}');
+      setBiometric(null);
+      return Future.value(". Please define fingerprint through device settings.");
     }
     return Future.value("SUCCESS");    
   }

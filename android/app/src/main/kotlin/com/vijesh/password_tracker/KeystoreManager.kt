@@ -7,8 +7,9 @@ import com.vijesh.password_tracker.CryptoHelper
 import java.lang.Byte
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
-import javax.crypto.spec.GCMParameterSpec
 import java.security.*
+import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.IvParameterSpec
 
 
 class KeystoreManager(ctxt: Context, crypto: CryptoHelper) {
@@ -69,7 +70,7 @@ class KeystoreManager(ctxt: Context, crypto: CryptoHelper) {
         val builder = KeyGenParameterSpec.Builder(MASTER_KEY_ALIAS,
                 KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
         )
-                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(KEY_SIZE)
                 .setUserAuthenticationRequired(true)
@@ -91,12 +92,12 @@ class KeystoreManager(ctxt: Context, crypto: CryptoHelper) {
         val ks = KeyStore.getInstance("AndroidKeyStore")
         ks.load(null)
         val key = ks.getKey(MASTER_KEY_ALIAS, null)
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+        val cipher = Cipher.getInstance("AES/CBC/NoPadding")
         val preferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
         var iv : kotlin.ByteArray
         if (preferences.contains(KEYSTORE_IV_NAME)){
             iv = cryptoHelper.hexToByteArray(preferences.getString(KEYSTORE_IV_NAME, "")!!)
-            val spec = GCMParameterSpec(IV_SIZE * Byte.SIZE, iv)
+            val spec = IvParameterSpec(iv)
             cipher.init(Cipher.DECRYPT_MODE, key, spec)
             return cipher
         } else {

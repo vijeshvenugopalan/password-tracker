@@ -8,13 +8,13 @@ import javax.crypto.spec.SecretKeySpec;
 
 class CryptoHelper {
     fun encryptData(data: ByteArray, applicationKey: ByteArray, iv: ByteArray): ByteArray {
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding") //actually uses PKCS#7
+        val cipher = Cipher.getInstance("AES/CBC/NoPadding") //actually uses PKCS#7
         cipher.init(Cipher.ENCRYPT_MODE, SecretKeySpec(applicationKey, "AES"), IvParameterSpec(iv))
         return cipher.doFinal(data)
     }
 
     fun decryptData(data: ByteArray, applicationKey: ByteArray, iv: ByteArray): ByteArray {
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding") //actually uses PKCS#7
+        val cipher = Cipher.getInstance("AES/CBC/NoPadding") //actually uses PKCS#7
         cipher.init(Cipher.DECRYPT_MODE, SecretKeySpec(applicationKey, "AES"), IvParameterSpec(iv))
         return cipher.doFinal(data)
     }

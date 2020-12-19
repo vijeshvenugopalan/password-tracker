@@ -42,7 +42,7 @@ class MainActivity: BiometricCallback, FlutterActivity() {
         methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
         methodChannel.setMethodCallHandler {
             call, result ->
-            log("Inside invoke method = ${call.method}")
+            log("Inside invoke method 2 = ${call.method}")
             if (null == secureLocalManager) {
                 secureLocalManager = SecureLocalManager(applicationContext)
             }
@@ -107,14 +107,18 @@ class MainActivity: BiometricCallback, FlutterActivity() {
     }
 
     fun encryptData() {
-        val encrypted = secureLocalManager?.encryptLocalData(text.toByteArray())
+        val encrypted = secureLocalManager?.encryptLocalData(text.toByteArray(Charsets.UTF_8))
         val b64 = Base64.encodeToString(encrypted, Base64.NO_WRAP)
         log("encrypted successfully")
         methodChannel.invokeMethod("successCallback",b64)
     }
 
     fun decryptData() {
+        var decrStr = ""
         val decrypted = secureLocalManager?.decryptLocalData(Base64.decode(text, Base64.NO_WRAP))
+        if (null != decrypted) {
+            decrStr = String(decrypted, Charsets.UTF_8);
+        }
         methodChannel.invokeMethod("successCallback", decrypted?.let { String(it) })
     }
 
@@ -137,10 +141,17 @@ class MainActivity: BiometricCallback, FlutterActivity() {
         val cipher = result.cryptoObject.cipher!!
         log("Successful authentication finger print")
         secureLocalManager?.loadOrGenerateApplicationKey(cipher)
-        if (isEncrypt) {
-            encryptData()
-        } else {
-            decryptData()
+        try {
+            if (isEncrypt) {
+                encryptData()
+            } else {
+                decryptData()
+            }
+        }catch (e:Exception) {
+            e.printStackTrace();
+            log("exception while authentication")
+            onBiometricAuthenticationInternalError("internal error");
+            secureLocalManager?.clearKeys()
         }
     }
 
@@ -148,10 +159,18 @@ class MainActivity: BiometricCallback, FlutterActivity() {
         val cipher = result.cryptoObject.cipher!!
         log("successful authentication biometric")
         secureLocalManager?.loadOrGenerateApplicationKey(cipher)
-        if (isEncrypt) {
-            encryptData()
-        } else {
-            decryptData()
+        
+        try {
+            if (isEncrypt) {
+                encryptData()
+            } else {
+                decryptData()
+            }
+        }catch (e:Exception) {
+            e.printStackTrace();
+            log("exception while authentication")
+            onBiometricAuthenticationInternalError("internal error");
+            secureLocalManager?.clearKeys()
         }
     }
 

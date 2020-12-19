@@ -111,10 +111,11 @@ class _ImportFileState extends State<ImportFile> with StoragePerm {
                   lifecycleState.canLaunchPassword = false;
                   await getPermissions();
                   log.i('import_file.dart :: 24 :: key pressed');
-                  File file = await FilePicker.getFile(
-                      // allowedExtensions: [".txt"],
-                      // type: FileType.custom,
-                      );
+                  FilePickerResult result = await FilePicker.platform.pickFiles();
+                  File file;
+                  if(result != null) {
+                    file = File(result.files.single.path);
+                  }
                   lifecycleState.canLaunchPassword = true;
                   setState(() {
                     msg = "WAITING";
