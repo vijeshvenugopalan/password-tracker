@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:logger/logger.dart';
-import 'package:password_tracker/services/database_util.dart';
 import 'package:password_tracker/services/logging.dart';
 import 'package:password_tracker/state/password.dart';
 import 'package:provider/provider.dart';

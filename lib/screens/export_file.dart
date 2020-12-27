@@ -5,11 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:logger/logger.dart';
 import 'package:password_tracker/state/data.dart';
-import 'package:password_tracker/state/lifecycle_state.dart';
 import 'package:password_tracker/utils/storage_perm.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:password_tracker/services/logging.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class ExportFile extends StatefulWidget {
