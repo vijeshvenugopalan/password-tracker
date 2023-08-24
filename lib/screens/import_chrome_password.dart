@@ -26,10 +26,10 @@ class _ImportChromePasswordState extends State<ImportChromePassword>
 
   String msg = "";
   bool success = false;
-  MoveData moveData;
-  Data data;
-  Password password;
-  LifecycleState lifecycleState;
+  late MoveData moveData;
+  late Data data;
+  late Password password;
+  late LifecycleState lifecycleState;
 
   @override
   void initState() {
@@ -69,27 +69,32 @@ class _ImportChromePasswordState extends State<ImportChromePassword>
                 child: RichText(
                   text: TextSpan(
                     text: 'Import password csv generrated by chrome browser',
-                    style: Theme.of(context).textTheme.display3,
+                    style: Theme.of(context).textTheme.headline2,
                   ),
                 ),
               ),
             ),
             Center(
-              child: RaisedButton(
+              child: ElevatedButton(
                 child: Text("Import from file"),
-                color: Theme.of(context).buttonTheme.colorScheme.background,
-                textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      Theme.of(context).buttonTheme.colorScheme!.background,
+                  foregroundColor:
+                      Theme.of(context).buttonTheme.colorScheme!.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
                 onPressed: () async {
                   log.i('import_chrome_password.dart :: 24 :: key pressed');
                   lifecycleState.canLaunchPassword = false;
                   await getPermissions();
-                  FilePickerResult result = await FilePicker.platform.pickFiles();
-                  File file;
-                  if(result != null) {
-                    file = File(result.files.single.path);
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles();
+                  File? file;
+                  if (result != null) {
+                    file = File(result.files.single.path!);
                   }
                   setState(() {
                     msg = "WAITING";
@@ -198,7 +203,7 @@ class _ImportChromePasswordState extends State<ImportChromePassword>
           log.i('import_chrome_password.dart :: 139 :: data = ${csvData[i]}');
           Item item = Item(isFolder: 0);
           item.name = csvData[i]["name"];
-          item.parent = result;
+          item.parent = result as int;
           log.i('import_chrome_password.dart :: 142 :: item = $item');
           await data.addItem(item);
 
@@ -206,9 +211,9 @@ class _ImportChromePasswordState extends State<ImportChromePassword>
           itemData.url = csvData[i]["url"];
           itemData.username = csvData[i]["username"];
           itemData.password = csvData[i]["password"];
-          if (null != itemData.password && itemData.password.length > 0) {
+          if (null != itemData.password && itemData.password!.length > 0) {
             itemData.password = PasswordCrypto.instance
-                .encrypt(itemData.password, password.passwordHash);
+                .encrypt(itemData.password!, password.passwordHash!);
           }
           itemData.itemId = item.id;
           log.i('import_chrome_password.dart :: 153 :: itemData=$itemData');

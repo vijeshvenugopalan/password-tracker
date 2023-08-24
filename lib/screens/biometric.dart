@@ -13,7 +13,7 @@ class Biometric extends StatefulWidget {
 class _BiometricState extends State<Biometric> {
   Logger log = getLogger('BiometricState');
 
-  Password password;
+  late Password password;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class _BiometricState extends State<Biometric> {
   Widget _getWidget() {
     if (password.isComplete) {
       if (password.availableBiometrics == null ||
-          password.availableBiometrics.length == 0) {
+          password.availableBiometrics!.length == 0) {
         return Center(
           child: Text("No Biometric capability available in this device"),
         );
@@ -64,7 +64,7 @@ class _BiometricState extends State<Biometric> {
           children: <Widget>[
             Text(
               "Enable",
-              style: Theme.of(context).textTheme.title,
+              style: Theme.of(context).textTheme.headline6,
             ),
             Switch(
               value: !isEnable,
@@ -72,15 +72,19 @@ class _BiometricState extends State<Biometric> {
               onChanged: (value) async {
                 bool canCheck = await password.canCheckBiometrics();
                 log.i('biometric.dart :: 63 :: cancheck = $canCheck');
-                log.i('biometric.dart :: 64 :: ${password.availableBiometrics.length}');
-                for (BiometricType biometric  in password.availableBiometrics) {
+                log.i(
+                    'biometric.dart :: 64 :: ${password.availableBiometrics!.length}');
+                for (BiometricType biometric in password.availableBiometrics!) {
                   log.i('biometric.dart :: 66 :: type = $biometric');
                 }
 
                 log.i('biometric.dart :: 50 :: value changed $value');
                 if (value) {
                   String result = await password.encrypt((status, text) async {
+                    log.i(
+                        'biometric.dart :: 84 :: status= $status :: text=$text');
                     if (status == 1) {
+                      log.i('biometric.dart :: 87 set biometric');
                       await password.setBiometric(text);
                     }
                   });
@@ -90,7 +94,7 @@ class _BiometricState extends State<Biometric> {
                       content: Text("Error while enabling biometric $result"),
                       duration: Duration(seconds: 2),
                     );
-                    Scaffold.of(context).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   }
                 } else {
                   await password.setBiometric(null);

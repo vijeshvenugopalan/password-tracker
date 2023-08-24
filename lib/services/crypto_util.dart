@@ -15,13 +15,14 @@ class PasswordCrypto {
 
     String passwordHash = hash(password);
     await TrackerDatabase.instance
-        .insert('password', encrypt(passwordHash,passwordHash));
+        .insert('password', encrypt(passwordHash, passwordHash));
   }
 
   String hash(String str) {
     var bytes = utf8.encode(str);
     var digest = sha256.convert(bytes);
-    List<int> l = List<int>(digest.bytes.length);
+    List<int> l = List<int>.filled(digest.bytes.length, -1);
+    // List<int> l = List<int>(digest.bytes.length);
     log.i('crypto_util.dart :: 25 :: length = ${digest.bytes.length}');
     for (var i = 0; i < digest.bytes.length; i++) {
       l[i] = digest.bytes[i] & 0x7f;

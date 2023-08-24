@@ -18,13 +18,13 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> with Add {
   final Logger log = getLogger('_SearchState');
   bool isSelected = false;
-  Data data;
-  MoveData moveData;
-  BuildContext mainContext;
+  late Data data;
+  late MoveData moveData;
+  late BuildContext mainContext;
   static const String move = "Move";
   static const String delete = "Delete";
-  List<Item> items;
-  TextEditingController controller;
+  late List<Item?> items;
+  late TextEditingController controller;
 
   static const List<String> choices = <String>[
     move,
@@ -63,7 +63,7 @@ class _SearchState extends State<Search> with Add {
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 mainContext = context;
-                Item currentItem = items.elementAt(index);
+                Item? currentItem = items.elementAt(index);
                 return GestureDetector(
                   onLongPress: () {
                     log.i('folder.dart :: 79 :: on long press');
@@ -75,7 +75,7 @@ class _SearchState extends State<Search> with Add {
                           log.i('folder.dart :: 88 :: on long press');
                           if (!isSelected) {
                             moveData.clearSelected();
-                            moveData.addSelected(currentItem.id);
+                            moveData.addSelected(currentItem!.id);
                             setState(() {
                               isSelected = true;
                             });
@@ -84,16 +84,16 @@ class _SearchState extends State<Search> with Add {
                         onTap: () {
                           log.i('folder.dart :: On tap on index=$index');
                           log.i(
-                              'folder.dart :: 71 :: id = ${currentItem.isFolder}');
+                              'folder.dart :: 71 :: id = ${currentItem!.isFolder}');
                           if (isSelected) {
-                            if (moveData.isSelected(currentItem.id)) {
+                            if (moveData.isSelected(currentItem!.id)) {
                               moveData.removeSelected(currentItem.id);
                             } else {
                               moveData.addSelected(currentItem.id);
                             }
                             setState(() {});
                           } else {
-                            if (currentItem.isFolder == 1) {
+                            if (currentItem!.isFolder == 1) {
                               data.setCurrentItemId(currentItem.id);
                               Navigator.pop(context);
                               Navigator.push(
@@ -101,7 +101,7 @@ class _SearchState extends State<Search> with Add {
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation,
                                           secondaryAnimation) =>
-                                      Folder(data.currentItemId),
+                                      Folder(data.currentItemId!),
                                   transitionsBuilder: (context, animation,
                                       secondaryAnimation, child) {
                                     var begin = Offset(1.0, 0.0);
@@ -134,7 +134,7 @@ class _SearchState extends State<Search> with Add {
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
-                                  (currentItem.isFolder == 1)
+                                  (currentItem!.isFolder == 1)
                                       ? Icon(Icons.folder)
                                       : Icon(Icons.description),
                                   SizedBox(
@@ -264,7 +264,7 @@ class _SearchState extends State<Search> with Add {
             setState(() {});
           } else {
             for (var item in items) {
-              moveData.addSelected(item.id);
+              moveData.addSelected(item!.id);
             }
             setState(() {});
           }
@@ -307,7 +307,7 @@ class _SearchState extends State<Search> with Add {
           content: Text("Selected items Deleted"),
           duration: Duration(seconds: 1),
         );
-        Scaffold.of(mainContext).showSnackBar(snackBar);
+        ScaffoldMessenger.of(mainContext).showSnackBar(snackBar);
         break;
       default:
     }
@@ -357,7 +357,8 @@ class _SearchState extends State<Search> with Add {
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Rename", style: Theme.of(context).textTheme.body1),
+                      Text("Rename",
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),
@@ -391,7 +392,8 @@ class _SearchState extends State<Search> with Add {
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Move", style: Theme.of(context).textTheme.body1),
+                      Text("Move",
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),
@@ -410,7 +412,7 @@ class _SearchState extends State<Search> with Add {
                       content: Text("Deleted ${item.name}"),
                       duration: Duration(seconds: 1),
                     );
-                    Scaffold.of(mainContext).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(mainContext).showSnackBar(snackBar);
                   },
                   behavior: HitTestBehavior.opaque,
                   child: Row(
@@ -429,7 +431,8 @@ class _SearchState extends State<Search> with Add {
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Delete", style: Theme.of(context).textTheme.body1),
+                      Text("Delete",
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),

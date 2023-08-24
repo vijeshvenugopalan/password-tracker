@@ -14,16 +14,16 @@ class ChangePassword extends StatefulWidget {
 class _ChangePasswordState extends State<ChangePassword> {
   Logger log = getLogger('_ChangePasswordState');
 
-  TextEditingController _oldPasswordController;
-  TextEditingController _newPasswordController;
-  TextEditingController _newPasswordConfirmController;
-  FocusNode _newPasswordFocusNode;
-  FocusNode _newPasswordConfirmFocusNode;
+  late TextEditingController _oldPasswordController;
+  late TextEditingController _newPasswordController;
+  late TextEditingController _newPasswordConfirmController;
+  late FocusNode _newPasswordFocusNode;
+  late FocusNode _newPasswordConfirmFocusNode;
 
   String msg = "";
   bool status = false;
-  Password password;
-  Data data;
+  late Password password;
+  late Data data;
 
   @override
   void initState() {
@@ -66,7 +66,6 @@ class _ChangePasswordState extends State<ChangePassword> {
         }
       },
       child: SingleChildScrollView(
-        
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -76,7 +75,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               child: (msg.compareTo("") == 0)
                   ? SizedBox.shrink()
                   : Container(
-                      width: MediaQuery.of(context).size.width-100,
+                      width: MediaQuery.of(context).size.width - 100,
                       height: 50,
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -175,26 +174,29 @@ class _ChangePasswordState extends State<ChangePassword> {
             SizedBox(
               height: 10,
             ),
-            FlatButton(
-                child: Text("Submit"),
-                color: Theme.of(context).buttonTheme.colorScheme.background,
-                textColor: Theme.of(context).buttonTheme.colorScheme.primary,
+            TextButton(
+              child: Text("Submit"),
+              style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                onPressed: () async {
-                  if(msg.compareTo("WAITING") == 0){
-                    return;
-                  }
-                  setState(() {
-                    status = false;
-                    msg = "WAITING";
-                  });
-                  await _onSubmit();
-                },
+                foregroundColor:
+                    Theme.of(context).buttonTheme.colorScheme?.primary,
+                backgroundColor: Theme.of(context).primaryColor,
               ),
+              onPressed: () async {
+                if (msg.compareTo("WAITING") == 0) {
+                  return;
+                }
+                setState(() {
+                  status = false;
+                  msg = "WAITING";
+                });
+                await _onSubmit();
+              },
+            ),
             SizedBox(
-              height:MediaQuery.of(context).size.height - 100,
+              height: MediaQuery.of(context).size.height - 100,
             )
           ],
         ),

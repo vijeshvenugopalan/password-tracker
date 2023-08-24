@@ -7,19 +7,18 @@ import 'package:password_tracker/services/database_util.dart';
 import 'package:password_tracker/services/logging.dart';
 
 class Password extends ChangeNotifier {
-
   Logger log = getLogger('Password');
 
   static const String AUTH_CANCELLED = "AUTH-CANCELLED";
   static const String AUTH_ERROR = "AUTH-ERROR";
   static const String AUTH_FAILED = "AUTH-FAILED";
 
-  String _encryptedPassword;
-  String _encryptedBiometric;
-  String passwordHash;
+  String? _encryptedPassword = "";
+  String? _encryptedBiometric = "";
+  String? passwordHash = null;
   bool _isComplete = false;
-  List<BiometricType> availableBiometrics;
-  Function callback;
+  List<BiometricType>? availableBiometrics;
+  Function callback = () => {};
   bool initalSetup = true;
 
   static const platform = const MethodChannel('vijesh.flutter.dev/fingerprint');
@@ -29,9 +28,8 @@ class Password extends ChangeNotifier {
     platform.setMethodCallHandler(_handleMethod);
   }
 
-
   Future<dynamic> _handleMethod(MethodCall call) async {
-    switch(call.method) {
+    switch (call.method) {
       case "successCallback":
         log.i('main.dart :: 62 :: ${call.arguments}');
         callback(1, call.arguments);
@@ -46,7 +44,7 @@ class Password extends ChangeNotifier {
   Future<String> encrypt(Function callback) async {
     this.callback = callback;
     try {
-      await platform.invokeMethod('encrypt', {"text":passwordHash});
+      await platform.invokeMethod('encrypt', {"text": passwordHash});
     } on PlatformException catch (e) {
       log.i('password.dart :: 51 :: ${e.toString()}');
       setBiometric(null);
@@ -54,15 +52,16 @@ class Password extends ChangeNotifier {
     } on Exception catch (ex) {
       log.i('password.dart :: 52 :: error = ${ex.toString()}');
       setBiometric(null);
-      return Future.value(". Please define fingerprint through device settings.");
+      return Future.value(
+          ". Please define fingerprint through device settings.");
     }
-    return Future.value("SUCCESS");    
+    return Future.value("SUCCESS");
   }
 
   Future<String> decrypt(Function callback) async {
     this.callback = callback;
     try {
-      await platform.invokeMethod('decrypt', {"text":_encryptedBiometric});
+      await platform.invokeMethod('decrypt', {"text": _encryptedBiometric});
     } on PlatformException catch (e) {
       log.i('password.dart :: 67 :: ${e.toString()}');
       setBiometric(null);
@@ -70,9 +69,10 @@ class Password extends ChangeNotifier {
     } on Exception catch (ex) {
       log.i('password.dart :: 66 :: error = ${ex.toString()}');
       setBiometric(null);
-      return Future.value(". Please define fingerprint through device settings.");
+      return Future.value(
+          ". Please define fingerprint through device settings.");
     }
-    return Future.value("SUCCESS");    
+    return Future.value("SUCCESS");
   }
 
   void _getPasswordState() async {
@@ -91,7 +91,7 @@ class Password extends ChangeNotifier {
     return Future.value(ret);
   }
 
-  String get password {
+  String? get password {
     return _encryptedPassword;
   }
 
@@ -99,17 +99,18 @@ class Password extends ChangeNotifier {
     log.i('45 : save password = $password');
 
     String passwordHash = PasswordCrypto.instance.hash(password);
-    String encryptedPassword = PasswordCrypto.instance.encrypt(passwordHash,passwordHash);
+    String encryptedPassword =
+        PasswordCrypto.instance.encrypt(passwordHash, passwordHash);
     _encryptedPassword = encryptedPassword;
-    await TrackerDatabase.instance
-        .insert('password', encryptedPassword);
+    await TrackerDatabase.instance.insert('password', encryptedPassword);
   }
 
-  String get biometric {
-    return _encryptedBiometric;
+  String? get biometric {
+    return (_encryptedBiometric != null) ? _encryptedBiometric : null;
   }
 
-  Future<void> setBiometric(String biometric) async {
+  Future<void> setBiometric(String? biometric) async {
+    log.i("password.dart ::113 :: biometric=$biometric");
     _encryptedBiometric = biometric;
     await TrackerDatabase.instance.insert('biometric', biometric);
     notifyListeners();
@@ -118,5 +119,4 @@ class Password extends ChangeNotifier {
   bool get isComplete {
     return _isComplete;
   }
-
 }

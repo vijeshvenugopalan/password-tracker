@@ -11,7 +11,7 @@ class InitScreen extends StatefulWidget {
 
 class _InitScreenState extends State<InitScreen> {
   Logger log = getLogger('_InitScreenState');
-  Password password;
+  late Password password;
   static const List<String> screenshots = <String>[
     'icons/initial-setup/screenshot1.png',
     'icons/initial-setup/screenshot2.png',
@@ -29,11 +29,17 @@ class _InitScreenState extends State<InitScreen> {
   Widget build(BuildContext context) {
     password = Provider.of<Password>(context);
     if (password.isComplete) {
-      if (password.password == null || password.password.isEmpty) {
+      if (password.password == null || password.password!.isEmpty) {
         return getWidget();
       } else {
         password.initalSetup = true;
         Navigator.pushReplacementNamed(context, "/password");
+        return Container(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+        ;
       }
     } else {
       return Container(
@@ -49,17 +55,17 @@ class _InitScreenState extends State<InitScreen> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onPanUpdate: (details) {
-          int diff = details.sourceTimeStamp.inMilliseconds -
+          int diff = details.sourceTimeStamp!.inMilliseconds -
               timeStamp.inMilliseconds;
           if (diff < 500) {
             return;
           }
           if (details.delta.dx < -10) {
-            timeStamp = details.sourceTimeStamp;
+            timeStamp = details.sourceTimeStamp!;
             increment();
           }
           if (details.delta.dx > 10) {
-            timeStamp = details.sourceTimeStamp;
+            timeStamp = details.sourceTimeStamp!;
             decrement();
           }
         },
@@ -74,22 +80,26 @@ class _InitScreenState extends State<InitScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                FlatButton(
+                TextButton(
                   onPressed: () {
                     decrement();
                   },
-                  color: Colors.blue,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                  ),
                   child: Icon(
                     Icons.arrow_left,
                     size: 70,
                     color: Colors.white,
                   ),
                 ),
-                FlatButton(
+                TextButton(
                   onPressed: () {
                     increment();
                   },
-                  color: Colors.blue,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                  ),
                   child: Icon(
                     Icons.arrow_right,
                     size: 70,
@@ -105,7 +115,7 @@ class _InitScreenState extends State<InitScreen> {
   }
 
   List<Widget> getWidgetList() {
-    List<Widget> list = List.filled(0, null, growable: true);
+    List<Widget> list = List.filled(0, Container(), growable: true);
     for (var i = 0; i < screenshots.length; i++) {
       list.add(getAnimatedContainer(i));
     }

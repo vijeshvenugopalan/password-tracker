@@ -15,20 +15,20 @@ class ItemWidget extends StatefulWidget {
 
 class _ItemWidgetState extends State<ItemWidget> {
   Logger log = getLogger('ItemWidgetState');
-  Data data;
-  Password password;
+  late Data data;
+  late Password password;
   bool passwordEnable = false;
   bool commentsEnable = false;
   bool secretEnable = false;
   bool isFirst = true;
   bool isModified = false;
-  ItemData itemData;
+  late ItemData itemData;
 
-  TextEditingController _controllerUsername;
-  TextEditingController _controllerUrl;
-  TextEditingController _controllerPassword;
-  TextEditingController _controllerSecret;
-  TextEditingController _controllerComments;
+  late TextEditingController _controllerUsername;
+  late TextEditingController _controllerUrl;
+  late TextEditingController _controllerPassword;
+  late TextEditingController _controllerSecret;
+  late TextEditingController _controllerComments;
 
   @override
   void initState() {
@@ -65,33 +65,41 @@ class _ItemWidgetState extends State<ItemWidget> {
           backgroundColor: Theme.of(context).backgroundColor,
           title: Text("Unsaved changes will be lost?"),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
               child: Text("Stay"),
-              color: Theme.of(context).buttonTheme.colorScheme.background,
-              textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              style: TextButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).buttonTheme.colorScheme!.background,
+                foregroundColor:
+                    Theme.of(context).buttonTheme.colorScheme!.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
             SizedBox(width: 20),
-            FlatButton(
+            TextButton(
               onPressed: () {
                 data.getBack();
                 Navigator.pop(context, true);
               },
               child: Text("Leave"),
-              color: Theme.of(context).buttonTheme.colorScheme.background,
-              textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              style: TextButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).buttonTheme.colorScheme!.background,
+                foregroundColor:
+                    Theme.of(context).buttonTheme.colorScheme!.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
           ],
         ),
-      );
+      ).then((value) => value ?? false);
     } else {
       data.getBack();
       return new Future<bool>.value(true);
@@ -105,13 +113,13 @@ class _ItemWidgetState extends State<ItemWidget> {
     var current = data.getCurrent();
     itemData = current['data'];
     if (isFirst) {
-      _controllerUsername.text = itemData.username;
+      _controllerUsername.text = itemData.username ?? '';
       log.i(
           'item.dart :: 55 :: password = ${itemData.password} :: hash = ${password.passwordHash}');
-      _controllerPassword.text = itemData.password;
-      _controllerUrl.text = itemData.url;
-      _controllerSecret.text = itemData.secret;
-      _controllerComments.text = itemData.comments;
+      _controllerPassword.text = itemData.password ?? '';
+      _controllerUrl.text = itemData.url ?? '';
+      _controllerSecret.text = itemData.secret ?? '';
+      _controllerComments.text = itemData.comments ?? '';
       if (null == _controllerSecret.text ||
           _controllerSecret.text.length <= 0) {
         secretEnable = true;
@@ -198,12 +206,12 @@ class _ItemWidgetState extends State<ItemWidget> {
                           log.i('item.dart :: 178 :: Going to encrypt');
                           _controllerPassword.text = PasswordCrypto.instance
                               .encrypt(_controllerPassword.text,
-                                  password.passwordHash);
+                                  password.passwordHash!);
                         } else {
                           log.i('item.dart :: 178 :: Going to decrypt');
                           _controllerPassword.text = PasswordCrypto.instance
                               .decrypt(_controllerPassword.text,
-                                  password.passwordHash);
+                                  password.passwordHash!);
                         }
                       }
                       setState(() {
@@ -229,12 +237,12 @@ class _ItemWidgetState extends State<ItemWidget> {
                           log.i('item.dart :: 192 :: Going to encrypt');
                           _controllerSecret.text = PasswordCrypto.instance
                               .encrypt(_controllerSecret.text,
-                                  password.passwordHash);
+                                  password.passwordHash!);
                         } else {
                           log.i('item.dart :: 197 :: Going to decrypt');
                           _controllerSecret.text = PasswordCrypto.instance
                               .decrypt(_controllerSecret.text,
-                                  password.passwordHash);
+                                  password.passwordHash!);
                         }
                       }
                       setState(() {
@@ -260,12 +268,12 @@ class _ItemWidgetState extends State<ItemWidget> {
                           log.i('item.dart :: 141 :: Going to encrypt');
                           _controllerComments.text = PasswordCrypto.instance
                               .encrypt(_controllerComments.text,
-                                  password.passwordHash);
+                                  password.passwordHash!);
                         } else {
                           log.i('item.dart :: 141 :: Going to decrypt');
                           _controllerComments.text = PasswordCrypto.instance
                               .decrypt(_controllerComments.text,
-                                  password.passwordHash);
+                                  password.passwordHash!);
                         }
                       }
                       setState(
@@ -281,12 +289,14 @@ class _ItemWidgetState extends State<ItemWidget> {
                     height: 10,
                     thickness: 1,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                       child: Text("Save"),
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
                       ),
                       onPressed: () async {
                         log.i('item_add.dart :: 85 :: Submit pressed');
@@ -297,7 +307,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                           if (passwordEnable) {
                             itemData.password = PasswordCrypto.instance.encrypt(
                                 _controllerPassword.text,
-                                password.passwordHash);
+                                password.passwordHash!);
                           } else {
                             itemData.password = _controllerPassword.text;
                           }
@@ -310,7 +320,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                             (_controllerSecret.text.isNotEmpty)) {
                           if (secretEnable) {
                             itemData.secret = PasswordCrypto.instance.encrypt(
-                                _controllerSecret.text, password.passwordHash);
+                                _controllerSecret.text, password.passwordHash!);
                           } else {
                             itemData.secret = _controllerSecret.text;
                           }
@@ -324,7 +334,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                           if (commentsEnable) {
                             itemData.comments = PasswordCrypto.instance.encrypt(
                                 _controllerComments.text,
-                                password.passwordHash);
+                                password.passwordHash!);
                           } else {
                             itemData.comments = _controllerComments.text;
                           }
@@ -363,11 +373,11 @@ class _ItemWidgetState extends State<ItemWidget> {
   }
 
   Widget _getSecretWidget(
-      {BuildContext context,
-      TextEditingController controller,
-      String text,
-      bool isEnabled,
-      Function onPressed,
+      {BuildContext? context,
+      TextEditingController? controller,
+      String text = '',
+      bool isEnabled = false,
+      required Function() onPressed,
       int minLines = 1,
       int maxLines = 1}) {
     if (!isEnabled) {
@@ -409,10 +419,10 @@ class _ItemWidgetState extends State<ItemWidget> {
                 _getIconContainer(Icons.content_copy, () {
                   String text;
                   if (isEnabled) {
-                    text = controller.text;
+                    text = controller!.text;
                   } else {
                     text = PasswordCrypto.instance
-                        .decrypt(controller.text, password.passwordHash);
+                        .decrypt(controller!.text, password.passwordHash!);
                   }
                   log.i('item.dart :: 257 :: clipboard text = $text');
                   Clipboard.setData(ClipboardData(text: text));
@@ -420,7 +430,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                     content: Text("Copied text to clipboard"),
                     duration: Duration(seconds: 1),
                   );
-                  Scaffold.of(context).showSnackBar(snackBar);
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }),
               ],
             ),
@@ -430,7 +440,7 @@ class _ItemWidgetState extends State<ItemWidget> {
     });
   }
 
-  Container _getIconContainer(IconData iconData, Function onPressed) {
+  Container _getIconContainer(IconData iconData, Function() onPressed) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
