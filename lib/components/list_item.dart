@@ -9,10 +9,10 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ItemData itemData = null;
+    ItemData? itemData = null;
     Data data = Provider.of<Data>(context);
     if (item.isFolder == 0) {
-      itemData = data.getItemData(item.id);
+      itemData = data.getItemData(item.id!);
     }
     return SizedBox(
       width: MediaQuery.of(context).size.width - 115,
@@ -27,36 +27,36 @@ class ListItem extends StatelessWidget {
                 children: <TextSpan>[
                   TextSpan(
                     text: "${item.name}",
-                    style: Theme.of(context).textTheme.body1,
+                    style: Theme.of(context).textTheme.bodyText2,
                   ),
                   TextSpan(
                     text: "\nusername: ",
                     style: TextStyle(
-                      color: Theme.of(context).textTheme.caption.color,
-                      fontSize: Theme.of(context).textTheme.caption.fontSize,
+                      color: Theme.of(context).textTheme.caption?.color,
+                      fontSize: Theme.of(context).textTheme.caption?.fontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   TextSpan(
-                    text: "${itemData.username}",
+                    text: "${itemData?.username}",
                     style: TextStyle(
-                      color: Theme.of(context).textTheme.caption.color,
-                      fontSize: Theme.of(context).textTheme.caption.fontSize,
+                      color: Theme.of(context).textTheme.caption?.color,
+                      fontSize: Theme.of(context).textTheme.caption?.fontSize,
                     ),
                   ),
                   TextSpan(
                     text: "\nurl: ",
                     style: TextStyle(
-                      color: Theme.of(context).textTheme.caption.color,
-                      fontSize: Theme.of(context).textTheme.caption.fontSize,
+                      color: Theme.of(context).textTheme.caption?.color,
+                      fontSize: Theme.of(context).textTheme.caption?.fontSize,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   TextSpan(
-                    text: "${itemData.url}",
+                    text: "${itemData?.url}",
                     style: TextStyle(
-                      color: Theme.of(context).textTheme.caption.color,
-                      fontSize: Theme.of(context).textTheme.caption.fontSize,
+                      color: Theme.of(context).textTheme.caption?.color,
+                      fontSize: Theme.of(context).textTheme.caption?.fontSize,
                     ),
                   ),
                 ],

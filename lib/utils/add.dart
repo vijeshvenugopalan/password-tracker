@@ -5,14 +5,14 @@ import 'package:password_tracker/services/logging.dart';
 import 'package:password_tracker/state/data.dart';
 import 'package:provider/provider.dart';
 
-class Add extends Object {
+mixin Add {
   Logger log = getLogger('Add');
 
-  createAlertDialogue(BuildContext context, bool isItem, [Item item]) {
+  createAlertDialogue(BuildContext context, bool isItem, [Item? item]) {
     TextEditingController controller = TextEditingController();
     Data data = Provider.of<Data>(context, listen: false);
     if (null != item) {
-      controller.text = item.name;
+      controller.text = item.name!;
     }
     return showDialog(
         context: context,
@@ -33,7 +33,7 @@ class Add extends Object {
                       ),
                       Text(
                         "Name",
-                        style: Theme.of(context).textTheme.title,
+                        style: Theme.of(context).textTheme.headline6,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -42,7 +42,8 @@ class Add extends Object {
                           textInputAction: TextInputAction.done,
                           controller: controller,
                           onSubmitted: (value) async {
-                            await _onSubmit(context, isItem, item, controller, data);
+                            await _onSubmit(
+                                context, isItem, item, controller, data);
                           },
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(left: 15, top: 20),
@@ -55,32 +56,38 @@ class Add extends Object {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            FlatButton(
-                              color: Theme.of(context).primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
+                                foregroundColor: Theme.of(context)
+                                    .buttonTheme
+                                    .colorScheme
+                                    ?.primary,
+                                backgroundColor: Theme.of(context).primaryColor,
                               ),
-                              textColor: Theme.of(context).buttonTheme.colorScheme.primary,
                               child: Text("Cancel"),
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                             ),
-                            FlatButton(
+                            TextButton(
                               onPressed: () async {
                                 await _onSubmit(
                                     context, isItem, item, controller, data);
                               },
-                              textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-                              child: Text("Save"),
-                              color: Theme.of(context).primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                              style: TextButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
+                                foregroundColor: Theme.of(context)
+                                    .buttonTheme
+                                    .colorScheme
+                                    ?.primary,
+                                backgroundColor: Theme.of(context).primaryColor,
                               ),
+                              child: Text("Save"),
                             ),
                           ],
                         ),
@@ -94,7 +101,7 @@ class Add extends Object {
         });
   }
 
-  Future<void> _onSubmit(BuildContext context, bool isItem, Item item,
+  Future<void> _onSubmit(BuildContext context, bool isItem, Item? item,
       TextEditingController controller, Data data) async {
     if (controller.text != null && controller.text.trim().length > 0) {
       if (null == item) {

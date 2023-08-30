@@ -14,8 +14,6 @@ class CustomAddButton extends StatefulWidget {
 class _CustomAddButtonState extends State<CustomAddButton> with Add {
   final Logger log = getLogger("CustomAddButton");
 
-
-
   createMenu(BuildContext context) {
     return showGeneralDialog(
       barrierLabel: "add",
@@ -47,14 +45,16 @@ class _CustomAddButtonState extends State<CustomAddButton> with Add {
                       ),
                       Icon(
                         Icons.description,
-                        color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                        color: Theme.of(context)
+                            .floatingActionButtonTheme
+                            .backgroundColor,
                         size: 25,
                       ),
                       SizedBox(
                         width: 10,
                       ),
                       Text("Create new Item",
-                          style: Theme.of(context).textTheme.body1),
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),
@@ -77,14 +77,16 @@ class _CustomAddButtonState extends State<CustomAddButton> with Add {
                       ),
                       Icon(
                         Icons.folder,
-                        color: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                        color: Theme.of(context)
+                            .floatingActionButtonTheme
+                            .backgroundColor,
                         size: 25,
                       ),
                       SizedBox(
                         width: 10,
                       ),
                       Text("Create new Folder",
-                          style: Theme.of(context).textTheme.body1),
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),

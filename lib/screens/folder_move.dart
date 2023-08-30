@@ -14,8 +14,8 @@ class FolderMove extends StatefulWidget {
 
 class _FolderMoveState extends State<FolderMove> with Add {
   final Logger log = getLogger('_FolderMoveState');
-  Data data;
-  MoveData moveData;
+  late Data data;
+  MoveData? moveData;
   Duration timeStamp = Duration();
 
   Future<bool> _popScope() async {
@@ -23,13 +23,13 @@ class _FolderMoveState extends State<FolderMove> with Add {
   }
 
   Future<bool> _popFolder() {
-    moveData.getBack(data);
+    moveData?.getBack(data);
     return new Future<bool>.value(false);
   }
 
   Future<bool> _onSwipeLeft() {
-    if (moveData.getCurrentItemId() != 1) {
-      moveData.getBack(data);
+    if (moveData?.getCurrentItemId() != 1) {
+      moveData?.getBack(data);
       return new Future<bool>.value(false);
     } else {
       return new Future<bool>.value(true);
@@ -41,33 +41,37 @@ class _FolderMoveState extends State<FolderMove> with Add {
     data = Provider.of<Data>(context, listen: false);
     moveData = Provider.of<MoveData>(context);
     log.i('folder_move.dart :: 44 :: complete = ${data.isComplete}');
-    List<Item> items = moveData.getFolders(data);
-    log.i('folder_move.dart :: item count = ${items.length}');
+    List<Item?>? items = moveData?.getFolders(data);
+    log.i('folder_move.dart :: item count = ${items?.length}');
     return WillPopScope(
-      onWillPop: (moveData.getCurrentItemId() == 1) ? _popScope : _popFolder,
+      onWillPop: (moveData?.getCurrentItemId() == 1) ? _popScope : _popFolder,
       child: Scaffold(
         appBar: AppBar(
           title: Text("Move to"),
           actions: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
-              child: FlatButton(
+              child: TextButton(
                 onPressed: () async {
                   log.i('folder_move.dart :: 46 :: Move to the folder');
-                  if (moveData.getSelectedCount() == 0) {
+                  if (moveData?.getSelectedCount() == 0) {
                     log.i(
                         'folder_move.dart :: 48 :: selected items are 0 so act as folder picker');
-                    Navigator.pop(context, moveData.getCurrentItemId());
+                    Navigator.pop(context, moveData?.getCurrentItemId());
                   } else {
-                    await moveData.moveItem(data);
+                    await moveData?.moveItem(data);
                     Navigator.pop(context);
                   }
                 },
                 child: Text("Move"),
-                color: Theme.of(context).buttonTheme.colorScheme.background,
-                textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                style: TextButton.styleFrom(
+                  backgroundColor:
+                      Theme.of(context).buttonTheme.colorScheme!.background,
+                  foregroundColor:
+                      Theme.of(context).buttonTheme.colorScheme!.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
               ),
             ),
@@ -79,12 +83,12 @@ class _FolderMoveState extends State<FolderMove> with Add {
         body: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onPanUpdate: (details) async {
-            int diff = details.sourceTimeStamp.inMilliseconds -
+            int diff = details.sourceTimeStamp!.inMilliseconds -
                 timeStamp.inMilliseconds;
             if (diff < 500) {
               return;
             }
-            timeStamp = details.sourceTimeStamp;
+            timeStamp = details.sourceTimeStamp!;
             if (details.delta.dx > 10) {
               bool pop = await _onSwipeLeft();
               if (pop) {
@@ -95,9 +99,9 @@ class _FolderMoveState extends State<FolderMove> with Add {
           child: Padding(
             padding: EdgeInsets.fromLTRB(15, 10, 0, 0),
             child: ListView.builder(
-                itemCount: items.length,
+                itemCount: items?.length,
                 itemBuilder: (BuildContext context, int index) {
-                  Item currentItem = items.elementAt(index);
+                  Item? currentItem = items?.elementAt(index);
                   return GestureDetector(
                     child: Column(
                       children: <Widget>[
@@ -105,8 +109,8 @@ class _FolderMoveState extends State<FolderMove> with Add {
                           onTap: () {
                             log.i('folder_move.dart :: On tap on index=$index');
                             log.i(
-                                'folder_move.dart :: 71 :: id = ${currentItem.isFolder}');
-                            moveData.setCurrentItemId(currentItem.id);
+                                'folder_move.dart :: 71 :: id = ${currentItem?.isFolder}');
+                            moveData?.setCurrentItemId(currentItem!.id);
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(
@@ -125,7 +129,7 @@ class _FolderMoveState extends State<FolderMove> with Add {
                                       width: MediaQuery.of(context).size.width -
                                           115,
                                       child: Text(
-                                        "${currentItem.name}",
+                                        "${currentItem?.name}",
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),

@@ -8,12 +8,12 @@ class Data extends ChangeNotifier {
   Logger log = getLogger('Data');
   Map parentMap = Map();
   Map data = Map();
-  int currentItemId = 1;
-  List<int> stack = List.filled(0, null,growable: true);
+  int? currentItemId = 1;
+  List<int?> stack = List.filled(0, null, growable: true);
 
   bool _isComplete = false;
-  List<Item> _itemList;
-  List<ItemData> _itemDataList;
+  List<Item>? _itemList;
+  List<ItemData>? _itemDataList;
 
   void setCurrentItemId(int currentItemId, [bool notify = true]) async {
     _isComplete = false;
@@ -30,7 +30,7 @@ class Data extends ChangeNotifier {
     }
   }
 
-  int getCurrentItemId() {
+  int? getCurrentItemId() {
     return currentItemId;
   }
 
@@ -53,24 +53,24 @@ class Data extends ChangeNotifier {
   void getBack() {
     log.i('data.dart :: 32 :: Get back list = $stack');
     stack.removeLast();
-    currentItemId = stack.elementAt(stack.length-1);
+    currentItemId = stack.elementAt(stack.length - 1);
     // currentItemId = getParent(currentItemId);
     notifyListeners();
   }
 
   Future<void> _retrieveData() async {
     _itemList = await TrackerDatabase.instance.getAllItems();
-    for (Item item in _itemList) {
+    for (Item? item in _itemList!) {
       // log.i('data.dart :: 46 :: ${item.id} :: ${item.name} :: ${item.parent}');
     }
-    for (Item item in _itemList) {
+    for (Item item in _itemList!) {
       parentMap[item.id] = item.parent;
       Map map = _getMap(item.id);
       map['item'] = item;
     }
 
     _itemDataList = await TrackerDatabase.instance.getAllItemData();
-    for (var itemData in _itemDataList) {
+    for (var itemData in _itemDataList!) {
       Map map = _getMap(itemData.itemId);
       map['data'] = itemData;
     }
@@ -79,7 +79,7 @@ class Data extends ChangeNotifier {
     // log.i('data.dart :: 49 :: parentMap = $parentMap');
   }
 
-  Map _getMap(int itemId) {
+  Map _getMap(int? itemId) {
     // log.i('data.dart :: 70 :: getmap item = $itemId');
     if (itemId == 1) {
       Map map = data;
@@ -109,8 +109,8 @@ class Data extends ChangeNotifier {
   //   return tempItems;
   // }
 
-  List<Item> getItems(int itemId) {
-    List<Item> tempItems = List<Item>.filled(0, null, growable: true);
+  List<Item?> getItems(int itemId) {
+    List<Item?> tempItems = List<Item?>.filled(0, null, growable: true);
     Map map = _getMap(itemId);
     // log.i('data.dart :: 71 :: map = $map');
     // log.i('data.dart :: 89 :: parentMap = $parentMap');
@@ -122,12 +122,12 @@ class Data extends ChangeNotifier {
     return tempItems;
   }
 
-  List<Item> getAllItems() {
+  List<Item>? getAllItems() {
     return _itemList;
   }
 
-  List<Item> getFolders(int id) {
-    List<Item> tempItems = List<Item>.filled(0, null, growable: true);
+  List<Item?> getFolders(int id) {
+    List<Item?> tempItems = List<Item?>.filled(0, null, growable: true);
     Map map = _getMap(id);
     log.i('data.dart :: 108 :: map = $map');
     for (var key in map.keys) {
@@ -141,23 +141,23 @@ class Data extends ChangeNotifier {
     return tempItems;
   }
 
-  List<Item> search(String text) {
+  List<Item?> search(String text) {
     if (null == text || text.trim().length == 0) {
       return List.filled(0, null);
     }
     log.i('data.dart :: 121 :: item list = $_itemList');
-    return _itemList.where((item) {
-      if (item.name.toLowerCase().contains(text)) {
+    return _itemList!.where((item) {
+      if (item.name!.toLowerCase().contains(text)) {
         return true;
       }
       if (item.isFolder == 0) {
         ItemData itemData = _getMap(item.id)['data'];
         if (null != itemData.username &&
-            itemData.username.toLowerCase().contains(text)) {
+            itemData.username!.toLowerCase().contains(text)) {
           return true;
         }
         if (null != itemData.url &&
-            itemData.url.toLowerCase().contains(text)) {
+            itemData.url!.toLowerCase().contains(text)) {
           return true;
         }
       }
@@ -178,8 +178,8 @@ class Data extends ChangeNotifier {
   }
 
   Future<void> _insertItem(Item item) async {
-    if (item.id == null || item.id <= 0) {
-      _itemList.add(item);
+    if (item.id == null || item.id! <= 0) {
+      _itemList!.add(item);
     }
     item.id = await TrackerDatabase.instance.insertItem(item);
     parentMap[item.id] = item.parent;
@@ -194,8 +194,8 @@ class Data extends ChangeNotifier {
 
   Future<void> _insertItemData(ItemData itemData) async {
     // log.i('data.dart :: 194 :: itemId = ${itemData.id}');
-    if (itemData.id == null || itemData.id <=0) {
-      _itemDataList.add(itemData);
+    if (itemData.id == null || itemData.id! <= 0) {
+      _itemDataList!.add(itemData);
     }
     itemData.id = await TrackerDatabase.instance.insertItemData(itemData);
     Map map = _getMap(itemData.itemId);
@@ -203,20 +203,20 @@ class Data extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteItem(Item item) async {
-    log.i('data.dart :: 172 :: Indide delete item ${item.id}');
+  Future<void> deleteItem(Item? item) async {
+    log.i('data.dart :: 172 :: Indide delete item ${item?.id}');
     await _deleteItem(item);
     log.i('data.dart :: 126 :: Map after delete = $data');
   }
 
-  Future<void> _deleteItem(Item item) async {
-    int itemId = item.id;
+  Future<void> _deleteItem(Item? item) async {
+    int? itemId = item?.id;
     int parentId = parentMap[itemId];
     Map itemMap = _getMap(itemId);
     log.i('data.dart :: 182 :: ');
     List<dynamic> keys = List.filled(0, null, growable: true);
     keys.addAll(itemMap.keys);
-    if (item.isFolder == 1) {
+    if (item?.isFolder == 1) {
       for (var key in keys) {
         if (_isKeyIndex(key)) {
           await _deleteItem(itemMap[key]['item']);
@@ -224,13 +224,13 @@ class Data extends ChangeNotifier {
       }
     } else {
       ItemData itemData = itemMap['data'];
-      _itemDataList.remove(itemData);
+      _itemDataList!.remove(itemData);
       await TrackerDatabase.instance.deleteItemData(itemData);
     }
     await TrackerDatabase.instance.deleteItem(item);
     Map map = _getMap(parentId);
     map.remove("$itemId");
-    _itemList.remove(item);
+    _itemList!.remove(item);
     parentMap.remove(itemId);
   }
 
@@ -243,18 +243,18 @@ class Data extends ChangeNotifier {
   }
 
   Future<void> reEncryptAll(String newHash, String oldHash) async {
-    log.i('data.dart :: 206 :: length = ${_itemDataList.length}');
-    for (var i = 0; i < _itemDataList.length; i++) {
-      ItemData itemData = _itemDataList.elementAt(i);
+    log.i('data.dart :: 206 :: length = ${_itemDataList!.length}');
+    for (var i = 0; i < _itemDataList!.length; i++) {
+      ItemData itemData = _itemDataList!.elementAt(i);
       log.i('data.dart :: 220 :: itemData = $itemData');
       if (null != itemData.password) {
-        itemData.password = _reEncrypt(itemData.password, newHash, oldHash);
+        itemData.password = _reEncrypt(itemData.password!, newHash, oldHash);
       }
       if (null != itemData.secret) {
-        itemData.secret = _reEncrypt(itemData.secret, newHash, oldHash);
+        itemData.secret = _reEncrypt(itemData.secret!, newHash, oldHash);
       }
       if (null != itemData.comments) {
-        itemData.comments = _reEncrypt(itemData.comments, newHash, oldHash);
+        itemData.comments = _reEncrypt(itemData.comments!, newHash, oldHash);
       }
       log.i('data.dart :: 211 :: Going to save ${itemData.username}');
       await TrackerDatabase.instance.insertItemData(itemData);

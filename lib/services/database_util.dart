@@ -53,9 +53,9 @@ class TrackerDatabase {
 
   TrackerDatabase._privateConstructor();
   static final TrackerDatabase instance = TrackerDatabase._privateConstructor();
-  Future<Database> database;
+  // Future<Database>? database;
   Future<Database> open() async {
-    database = openDatabase(
+    return openDatabase(
       join(await getDatabasesPath(), 'tracker.db'),
       onCreate: (db, version) async {
         for (final script in initScripts) {
@@ -69,10 +69,10 @@ class TrackerDatabase {
       },
       version: migrationScripts.length + 1,
     );
-    return database;
+    // return database;
   }
 
-  Future<void> insert(String key, String value) async {
+  Future<void> insert(String key, String? value) async {
     log.i('65 : key=$key :: value=$value');
     Database db = await open();
     var map = {
@@ -87,10 +87,10 @@ class TrackerDatabase {
     await db.close();
   }
 
-  Future<String> getValue(String key) async {
+  Future<String?> getValue(String key) async {
     log.i('80 : inside getvalue');
 
-    String value;
+    String? value;
     Database db = await open();
     final List<Map<String, dynamic>> maps = await db.query('tInfo');
     await db.close();
@@ -105,7 +105,7 @@ class TrackerDatabase {
 
   Future<int> insertItem(Item item) async {
     Database db = await open();
-    int id = item.id;
+    int id = item.id!;
     if (id > 0) {
       await db.update(
         'tItem',
@@ -125,7 +125,7 @@ class TrackerDatabase {
 
   Future<int> insertItemData(ItemData itemData) async {
     Database db = await open();
-    int id = itemData.id;
+    int id = itemData.id!;
     if (id > 0) {
       await db.update(
         'tItemData',
@@ -143,9 +143,9 @@ class TrackerDatabase {
     return id;
   }
 
-  Future<void> deleteItem(Item item) async {
+  Future<void> deleteItem(Item? item) async {
     Database db = await open();
-    int id = item.id;
+    int id = item!.id!;
     if (id > 0) {
       await db.delete(
         'tItem',
@@ -157,7 +157,7 @@ class TrackerDatabase {
 
   Future<void> deleteItemData(ItemData itemData) async {
     Database db = await open();
-    int id = itemData.id;
+    int id = itemData.id!;
     if (id > 0) {
       await db.delete(
         'tItemData',
@@ -165,7 +165,7 @@ class TrackerDatabase {
         whereArgs: [id],
       );
     }
-    return id;
+    // return id;
   }
 
   Future<List<Item>> getAllItems() async {
@@ -220,12 +220,12 @@ class TrackerDatabase {
 
 class Item {
   int id = 0;
-  String name;
-  final int isFolder;
-  int parent;
+  String? name;
+  final int? isFolder;
+  int? parent;
 
   Item({this.name, this.isFolder, this.parent});
-  Item.getItem({this.name, this.isFolder, this.parent, this.id});
+  Item.getItem({this.name, this.isFolder, this.parent, this.id = 0});
 
   static Item getItemFromMap(Map<String, dynamic> map) {
     return Item(
@@ -264,17 +264,28 @@ class Item {
 
 class ItemData {
   int id = 0;
-  String username;
-  String url;
-  String password;
-  String secret;
-  String comments;
-  int itemId;
+  String? username;
+  String? url;
+  String? password;
+  String? secret;
+  String? comments;
+  int? itemId;
 
   ItemData(
-      {this.username, this.password, this.comments, this.itemId, this.secret, this.url});
+      {this.username,
+      this.password,
+      this.comments,
+      this.itemId,
+      this.secret,
+      this.url});
   ItemData.getItemData(
-      {this.id, this.itemId, this.username, this.password, this.comments, this.secret, this.url});
+      {this.id = 0,
+      this.itemId,
+      this.username,
+      this.password,
+      this.comments,
+      this.secret,
+      this.url});
   static ItemData getItemDataFromMap(Map<String, dynamic> map) {
     return ItemData(
       username: map['username'],
@@ -289,7 +300,7 @@ class ItemData {
   Map<String, dynamic> toMap() {
     return {
       'username': username,
-      'url':url,
+      'url': url,
       'password': password,
       'secret': secret,
       'comments': comments,

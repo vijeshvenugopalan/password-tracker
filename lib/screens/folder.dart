@@ -29,15 +29,15 @@ class Folder extends StatefulWidget {
 class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
   final Logger log = getLogger('_FolderState');
   bool isSelected = false;
-  Data data;
-  MoveData moveData;
-  BuildContext mainContext;
+  Data? data;
+  MoveData? moveData;
+  BuildContext? mainContext;
   static const String move = "Move";
   static const String delete = "Delete";
-  List<Item> items;
-  LifecycleState lifecycleState;
+  List<Item?>? items;
+  LifecycleState? lifecycleState;
   // ScrollController _scrollController;
-  PageStorageKey _pageStorageKey;
+  PageStorageKey? _pageStorageKey;
   Duration timeStamp = Duration();
 
   static const List<String> choices = <String>[
@@ -48,19 +48,19 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     log.i('folder.dart :: 34 :: state = $state');
-    var routeName = ModalRoute.of(context).settings.name;
+    var routeName = ModalRoute.of(context)?.settings.name;
 
     log.i('folder.dart :: 52 :: route name = $routeName');
-    log.i('folder.dart :: 42 :: state in local = ${lifecycleState.state}');
+    log.i('folder.dart :: 42 :: state in local = ${lifecycleState?.state}');
     log.i(
-        'folder.dart :: 54 :: can launch = ${lifecycleState.canLaunchPassword}');
-    if (!lifecycleState.canLaunchPassword) {
+        'folder.dart :: 54 :: can launch = ${lifecycleState?.canLaunchPassword}');
+    if (!lifecycleState!.canLaunchPassword) {
       return;
     }
     if (state == AppLifecycleState.paused) {
-      lifecycleState.state = LifecycleState.paused;
+      lifecycleState!.state = LifecycleState.paused;
     } else if (state == AppLifecycleState.resumed) {
-      lifecycleState.state = LifecycleState.resumed;
+      lifecycleState!.state = LifecycleState.resumed;
       _startPin(context);
     }
     // Navigator.popUntil(context, ModalRoute.withName('/home'));
@@ -69,7 +69,7 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
   }
 
   Future<void> _startPin(BuildContext context) {
-    lifecycleState.canLaunchPassword = false;
+    lifecycleState!.canLaunchPassword = false;
     Navigator.pushNamed(context, '/password');
     return Future<Void>.value();
   }
@@ -107,36 +107,44 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
         ),
         title: Text("Do you want to exit the app?"),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             onPressed: () {
               Navigator.pop(context, false);
             },
             child: Text("No"),
-            color: Theme.of(context).buttonTheme.colorScheme.background,
-            textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              backgroundColor:
+                  Theme.of(context).buttonTheme.colorScheme!.background,
+              foregroundColor:
+                  Theme.of(context).buttonTheme.colorScheme!.primary,
             ),
           ),
           SizedBox(width: 20),
-          FlatButton(
+          TextButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
             child: Text("Yes"),
-            color: Theme.of(context).buttonTheme.colorScheme.background,
-            textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+            style: TextButton.styleFrom(
+              backgroundColor:
+                  Theme.of(context).buttonTheme.colorScheme!.background,
+              foregroundColor:
+                  Theme.of(context).buttonTheme.colorScheme!.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
           ),
         ],
       ),
-    );
+    ).then((value) => value ?? false);
   }
 
   Future<bool> _popFolder() {
-    data.getBack();
+    data!.getBack();
     return new Future<bool>.value(true);
   }
 
@@ -147,7 +155,7 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
       });
       return Future<bool>.value(false);
     }
-    return (data.getCurrentItemId() == 1) ? _popScope() : _popFolder();
+    return (data!.getCurrentItemId() == 1) ? _popScope() : _popFolder();
   }
 
   Future<bool> _onSwipeLeft() {
@@ -157,7 +165,9 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
       });
       return Future<bool>.value(false);
     }
-    return (data.getCurrentItemId() == 1) ? Future<bool>.value(false) : _popFolder();
+    return (data!.getCurrentItemId() == 1)
+        ? Future<bool>.value(false)
+        : _popFolder();
   }
 
   @override
@@ -165,16 +175,16 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
     data = Provider.of<Data>(context);
     moveData = Provider.of<MoveData>(context);
     lifecycleState = Provider.of<LifecycleState>(context);
-    log.i('folder.dart :: 44 :: complete = ${data.isComplete}');
-    if (data.isComplete) {
+    log.i('folder.dart :: 44 :: complete = ${data!.isComplete}');
+    if (data!.isComplete) {
       // if (data.currentItemId != widget.rootId) {
       //   log.i(
       //       'folder.dart :: 150 :: id = ${data.currentItemId} :: rootId=${widget.rootId}');
       //   log.i('folder.dart :: 150 :: Ids are not equal so just ignore 1');
       //   return Center(child: CircularProgressIndicator());
       // }
-      items = data.getItems(widget.rootId);
-      log.i('folder.dart :: item count = ${items.length}');
+      items = data!.getItems(widget!.rootId);
+      log.i('folder.dart :: item count = ${items!.length}');
       return WillPopScope(
         onWillPop: _onBack,
         child: Scaffold(
@@ -186,11 +196,12 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
           body: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onPanUpdate: (details) async {
-              int diff = details.sourceTimeStamp.inMilliseconds - timeStamp.inMilliseconds;
+              int diff = details.sourceTimeStamp!.inMilliseconds -
+                  timeStamp.inMilliseconds;
               if (diff < 500) {
                 return;
               }
-              timeStamp = details.sourceTimeStamp;
+              timeStamp = details.sourceTimeStamp!;
               if (details.delta.dx > 10) {
                 bool pop = await _onSwipeLeft();
                 log.i('folder.dart :: 190 :: pop = $pop');
@@ -206,13 +217,13 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
 
                   key: _pageStorageKey,
                   // key: ValueKey<int>(Random(DateTime.now().millisecondsSinceEpoch).nextInt(4294967296)),
-                  itemCount: items.length,
+                  itemCount: items?.length,
                   itemBuilder: (
                     BuildContext context,
                     int index,
                   ) {
                     mainContext = context;
-                    Item currentItem = items.elementAt(index);
+                    Item? currentItem = items?.elementAt(index);
                     return GestureDetector(
                       onLongPress: () {
                         log.i('folder.dart :: 79 :: on long press');
@@ -223,8 +234,8 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                             onLongPress: () {
                               log.i('folder.dart :: 88 :: on long press');
                               if (!isSelected) {
-                                moveData.clearSelected();
-                                moveData.addSelected(currentItem.id);
+                                moveData?.clearSelected();
+                                moveData?.addSelected(currentItem!.id);
                                 setState(() {
                                   isSelected = true;
                                 });
@@ -233,23 +244,23 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                             onTap: () {
                               log.i('folder.dart :: On tap on index=$index');
                               log.i(
-                                  'folder.dart :: 71 :: id = ${currentItem.isFolder}');
+                                  'folder.dart :: 71 :: id = ${currentItem!.isFolder}');
                               if (isSelected) {
-                                if (moveData.isSelected(currentItem.id)) {
-                                  moveData.removeSelected(currentItem.id);
+                                if (moveData!.isSelected(currentItem.id)) {
+                                  moveData!.removeSelected(currentItem.id);
                                 } else {
-                                  moveData.addSelected(currentItem.id);
+                                  moveData!.addSelected(currentItem.id);
                                 }
                                 setState(() {});
                               } else {
                                 if (currentItem.isFolder == 1) {
-                                  data.setCurrentItemId(currentItem.id);
+                                  data?.setCurrentItemId(currentItem.id);
                                   Navigator.push(
                                     context,
                                     PageRouteBuilder(
                                       pageBuilder: (context, animation,
                                               secondaryAnimation) =>
-                                          Folder(data.currentItemId),
+                                          Folder(data!.currentItemId!),
                                       transitionsBuilder: (context, animation,
                                           secondaryAnimation, child) {
                                         var begin = Offset(1.0, 0.0);
@@ -272,7 +283,7 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                                   //           Folder(data.currentItemId)),
                                   // );
                                 } else {
-                                  data.setCurrentItemId(currentItem.id, false);
+                                  data?.setCurrentItemId(currentItem.id, false);
                                   navigateItem();
                                 }
                               }
@@ -287,13 +298,13 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                                 children: <Widget>[
                                   Row(
                                     children: <Widget>[
-                                      (currentItem.isFolder == 1)
+                                      (currentItem!.isFolder == 1)
                                           ? Icon(Icons.folder)
                                           : Icon(Icons.description),
                                       SizedBox(
                                         width: 10,
                                       ),
-                                      ListItem(currentItem),
+                                      ListItem(currentItem!),
                                     ],
                                   ),
                                   GestureDetector(
@@ -302,12 +313,12 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                                       log.i(
                                           'folder.dart :: 118 :: tap on more');
                                       if (isSelected) {
-                                        if (moveData
+                                        if (moveData!
                                             .isSelected(currentItem.id)) {
-                                          moveData
+                                          moveData!
                                               .removeSelected(currentItem.id);
                                         } else {
-                                          moveData.addSelected(currentItem.id);
+                                          moveData!.addSelected(currentItem.id);
                                         }
                                         setState(() {});
                                       } else {
@@ -321,7 +332,7 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                                           top: 10,
                                           bottom: 10),
                                       child: Icon(
-                                        _getIcon(currentItem.id),
+                                        _getIcon(currentItem!.id),
                                         color: Theme.of(context)
                                             .primaryIconTheme
                                             .color,
@@ -355,24 +366,24 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
     }
   }
 
-  Future<void> navigateItem() async {
+  Future<Void> navigateItem() async {
     Navigator.pushNamed(context, "/item");
     return Future<Void>.value();
   }
 
   Widget _getTitle() {
     if (isSelected) {
-      int count = moveData.getSelectedCount();
+      int count = moveData!.getSelectedCount();
       return Text("$count Selected");
     }
     return (widget.rootId == 1)
         ? Text("Home")
-        : Text(data.getMap(widget.rootId)['item'].name);
+        : Text(data!.getMap(widget.rootId)['item'].name);
   }
 
   IconData _getIcon(int id) {
     if (isSelected) {
-      if (moveData.isSelected(id)) {
+      if (moveData!.isSelected(id)) {
         return Icons.check_box;
       } else {
         return Icons.check_box_outline_blank;
@@ -405,7 +416,7 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
       IconButton(
         onPressed: () {
           log.i('folder.dart :: 326 :: pressed on tick');
-          moveData.clearSelected();
+          moveData!.clearSelected();
           setState(() {
             isSelected = true;
           });
@@ -426,12 +437,12 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
       IconButton(
         onPressed: () {
           log.i('folder.dart :: 346 :: pressed on double tick');
-          if (items.length == moveData.getSelectedCount()) {
-            moveData.clearSelected();
+          if (items?.length == moveData!.getSelectedCount()) {
+            moveData!.clearSelected();
             setState(() {});
           } else {
-            for (var item in items) {
-              moveData.addSelected(item.id);
+            for (var item in items!) {
+              moveData!.addSelected(item!.id);
             }
             setState(() {});
           }
@@ -444,7 +455,7 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
       SizedBox(
         width: 10,
       ),
-      (moveData.getSelectedCount() > 0)
+      (moveData!.getSelectedCount() > 0)
           ? PopupMenuButton(
               onSelected: (choice) async {
                 await choiceAction(choice);
@@ -464,21 +475,21 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
     switch (choice) {
       case move:
         log.i('folder.dart :: 383 :: move switch');
-        moveData.setCurrentItemId(1);
+        moveData!.setCurrentItemId(1);
         await Navigator.pushNamed(context, '/move');
         break;
       case delete:
         log.i('folder.dart :: 388 :: delete switch');
-        await moveData.deleteItems(data);
+        await moveData!.deleteItems(data!);
         final snackBar = SnackBar(
           content: Text("Selected items Deleted"),
           duration: Duration(seconds: 1),
         );
-        Scaffold.of(mainContext).showSnackBar(snackBar);
+        ScaffoldMessenger.of(mainContext!).showSnackBar(snackBar);
         break;
       default:
     }
-    if (moveData.getSelectedCount() == 0) {
+    if (moveData!.getSelectedCount() == 0) {
       setState(() {
         isSelected = false;
       });
@@ -524,7 +535,8 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Rename", style: Theme.of(context).textTheme.body1),
+                      Text("Rename",
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),
@@ -535,9 +547,9 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                 GestureDetector(
                   onTap: () {
                     log.i('folder.dart :: 202 :: move');
-                    moveData.clearSelected();
-                    moveData.addSelected(item.id);
-                    moveData.setCurrentItemId(1);
+                    moveData!.clearSelected();
+                    moveData!.addSelected(item.id);
+                    moveData!.setCurrentItemId(1);
                     Navigator.pop(context);
                     Navigator.pushNamed(context, '/move');
                   },
@@ -558,7 +570,8 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Move", style: Theme.of(context).textTheme.body1),
+                      Text("Move",
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),
@@ -569,15 +582,15 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                 GestureDetector(
                   onTap: () async {
                     log.i('folder.dart :: 232 :: delete');
-                    moveData.clearSelected();
-                    moveData.addSelected(item.id);
-                    await moveData.deleteItems(data);
+                    moveData!.clearSelected();
+                    moveData!.addSelected(item.id);
+                    await moveData!.deleteItems(data!);
                     Navigator.pop(context);
                     final snackBar = SnackBar(
                       content: Text("Deleted ${item.name}"),
                       duration: Duration(seconds: 1),
                     );
-                    Scaffold.of(mainContext).showSnackBar(snackBar);
+                    ScaffoldMessenger.of(mainContext!).showSnackBar(snackBar);
                   },
                   behavior: HitTestBehavior.opaque,
                   child: Row(
@@ -596,7 +609,8 @@ class _FolderState extends State<Folder> with Add, WidgetsBindingObserver {
                       SizedBox(
                         width: 10,
                       ),
-                      Text("Delete", style: Theme.of(context).textTheme.body1),
+                      Text("Delete",
+                          style: Theme.of(context).textTheme.bodyText2),
                     ],
                   ),
                 ),

@@ -31,16 +31,16 @@ Widget getInitScreen() {
 
 class _PasswordWidgetState extends State<PasswordWidget> {
   Logger log = getLogger('_PasswordWidgetState');
-  TextEditingController _passwordFirstController;
-  TextEditingController _passwordConfirmController;
-  TextEditingController _passwordEntryController;
-  FocusNode _passwordConfirmFocusNode;
+  late TextEditingController _passwordFirstController;
+  late TextEditingController _passwordConfirmController;
+  late TextEditingController _passwordEntryController;
+  late FocusNode _passwordConfirmFocusNode;
 
   String msg = "";
   bool success = true;
-  Password password;
-  Data data;
-  LifecycleState lifecycleState;
+  late Password password;
+  late Data data;
+  late LifecycleState lifecycleState;
   @override
   void initState() {
     super.initState();
@@ -105,8 +105,9 @@ class _PasswordWidgetState extends State<PasswordWidget> {
         }
       });
     }
+    log.i("password.dart :: 108 :: before password check");
 
-    if (password.password == null || password.password.isEmpty) {
+    if (password.password == null || password.password!.isEmpty) {
       if (password.initalSetup) {
         return _getFirstEntry();
       } else {
@@ -116,6 +117,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
         );
       }
     }
+    log.i("password.dart :: 108 :: password is already set");
     return _getPasswordEntry();
   }
 
@@ -139,7 +141,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
           CircleAvatar(
               radius: 40,
               backgroundColor:
-                  Theme.of(context).textTheme.display1.backgroundColor,
+                  Theme.of(context).textTheme.headline4?.backgroundColor,
               child: Image(
                 image: AssetImage("icons/icon.png"),
                 fit: BoxFit.fill,
@@ -178,12 +180,16 @@ class _PasswordWidgetState extends State<PasswordWidget> {
           SizedBox(
             height: 10,
           ),
-          FlatButton(
+          TextButton(
             child: Text("Submit"),
-            color: Theme.of(context).buttonTheme.colorScheme.background,
-            textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+            style: TextButton.styleFrom(
+              backgroundColor:
+                  Theme.of(context).buttonTheme.colorScheme?.background,
+              foregroundColor:
+                  Theme.of(context).buttonTheme.colorScheme?.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
             onPressed: () async {
               await _onSubmit();
@@ -260,7 +266,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
           CircleAvatar(
               radius: 40,
               backgroundColor:
-                  Theme.of(context).textTheme.display1.backgroundColor,
+                  Theme.of(context).textTheme.headline4?.backgroundColor,
               child: Image(
                 image: AssetImage("icons/icon.png"),
                 fit: BoxFit.fill,
@@ -318,13 +324,16 @@ class _PasswordWidgetState extends State<PasswordWidget> {
           SizedBox(
             height: 10,
           ),
-          FlatButton(
+          TextButton(
             child: Text("Submit"),
-            color: Theme.of(context).buttonTheme.colorScheme.background,
-            textColor: Theme.of(context).buttonTheme.colorScheme.primary,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+            style: TextButton.styleFrom(
+                backgroundColor:
+                    Theme.of(context).buttonTheme.colorScheme?.background,
+                foregroundColor:
+                    Theme.of(context).buttonTheme.colorScheme?.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                )),
             onPressed: () async {
               await _onSubmitFirstEntry();
             },

@@ -22,9 +22,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
-  Route onGenerateRoute(RouteSettings settings) {
-    Route page;
+  Route? onGenerateRoute(RouteSettings settings) {
+    Route? page = null;
     switch (settings.name) {
       case "/password":
         page = CupertinoPageRoute(builder: (context) => getInitScreen());
@@ -80,9 +79,9 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: onGenerateRoute,
         theme: ThemeData(
           toggleableActiveColor: Colors.green,
-          accentColor: Colors.white,
+          // seconda: Colors.white,
           primaryColor: Colors.blue,
-          buttonColor: Colors.blue,
+          // buttonColor: Colors.blue,
           buttonTheme: ButtonThemeData(
             buttonColor: Colors.blue,
             colorScheme: ColorScheme(
@@ -109,49 +108,47 @@ class MyApp extends StatelessWidget {
           brightness: Brightness.light,
           appBarTheme: AppBarTheme(
             color: Colors.white,
-            brightness: Brightness.light,
+            // brightness: Brightness.light,
             iconTheme: IconThemeData(
               color: Colors.blue,
             ),
-            textTheme: TextTheme(
-              title: TextStyle(
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
+            titleTextStyle: TextStyle(
+              color: Colors.black54,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
             ),
           ),
           primaryIconTheme: IconThemeData(color: Colors.black87, size: 20),
           iconTheme: IconThemeData(color: Colors.blue[300], size: 40),
           textTheme: TextTheme(
-            headline: TextStyle(
+            headline5: TextStyle(
               color: Colors.black,
               fontSize: 40,
               fontWeight: FontWeight.bold,
             ),
-            title: TextStyle(
+            headline6: TextStyle(
               color: Colors.black87,
             ),
-            body1: TextStyle(
+            bodyText2: TextStyle(
               color: Colors.black87,
               fontSize: 17,
             ),
-            display1: TextStyle(
+            headline4: TextStyle(
               color: Colors.blue[900],
               fontSize: 40,
               fontWeight: FontWeight.bold,
               backgroundColor: Colors.grey,
             ),
-            display2: TextStyle(
+            headline3: TextStyle(
               color: Colors.black87,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
-            display3: TextStyle(
+            headline2: TextStyle(
               color: Colors.black87,
               fontSize: 18,
             ),
-            display4: TextStyle(
+            headline1: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.normal,
               fontSize: 15,

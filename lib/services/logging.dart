@@ -10,10 +10,9 @@ class SimpleLogPrinter extends LogPrinter {
   SimpleLogPrinter(this.className);
   @override
   List<String> log(LogEvent event) {
-    var color = PrettyPrinter.levelColors[event.level];
     if (release) {
       return [];
     }
-    return [color('$color $className - ${event.message}')];
+    return ['$className - ${event.message}'];
   }
 }

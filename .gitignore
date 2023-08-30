@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -22,6 +23,7 @@
 
 # Flutter/Dart/Pub related
 **/doc/api/
+**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -29,28 +31,14 @@
 .pub-cache/
 .pub/
 /build/
-key.jks
-android/key.properties
 
+# Symbolication related
+app.*.symbols
 
-# icons
-icons/Untitled.xcf
-icons/featured-graphics.png
-icons/featured-graphics.xcf
-icons/icon.xcf
-icons/icon144.png
-icons/icon192.png
-icons/icon48.png
-icons/icon72.png
-icons/icon96.png
-icons/initial-setup/screenshots/
+# Obfuscation related
+app.*.map.json
 
-
-test/
-pubspec.lock
-
-# Web related
-lib/generated_plugin_registrant.dart
-
-# Exceptions to above rules.
-!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
