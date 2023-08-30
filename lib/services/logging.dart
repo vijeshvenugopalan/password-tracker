@@ -5,7 +5,7 @@ Logger getLogger(String className) {
 }
 
 class SimpleLogPrinter extends LogPrinter {
-  bool release = false;
+  bool release = true;
   final String className;
   SimpleLogPrinter(this.className);
   @override
